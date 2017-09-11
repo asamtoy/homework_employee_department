@@ -5,6 +5,8 @@ package example.codeclan.com.employee_starter;
  */
 
 import db.SqlRunner;
+import java.sql.ResultSet;
+
 
 public class Department {
     private int id;
@@ -14,8 +16,12 @@ public class Department {
         this.title = title;
     }
 
-    public int getId() {
+    public int getID() {
         return id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getTitle() {
@@ -27,4 +33,39 @@ public class Department {
         this.id = SqlRunner.executeUpdate(sql);
         SqlRunner.closeConnection();
     }
+
+    public static void all(){
+        String sql = "SELECT * FROM departments;";
+        ResultSet rs = SqlRunner.executeQuery(sql);
+        try{
+            while( rs.next() ) {
+                String title = rs.getString("title");
+                System.out.println(title);
+            }
+        } catch( Exception e){
+            System.err.println( e.getClass().getName() + " : " + e.getMessage() );
+            System.exit(0);
+        }finally{
+            SqlRunner.closeConnection();
+        }
+    }
+
+    public static void deleteAll(){
+        String sql = "DELETE FROM departments;";
+        SqlRunner.executeUpdate(sql);
+        SqlRunner.closeConnection();
+    }
+
+    public void delete(){
+        String sql = String.format("DELETE FROM departments WHERE id = %d", this.id);
+        SqlRunner.executeUpdate(sql);
+        SqlRunner.closeConnection();
+    }
+
+    public void update(){
+        String sql = String.format("UPDATE departments SET title = '%s' WHERE id = %d;", this.title, this.id);
+        SqlRunner.executeUpdate(sql);
+        SqlRunner.closeConnection();
+    }
+
 }
